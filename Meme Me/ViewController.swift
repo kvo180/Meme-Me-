@@ -23,15 +23,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return true
     }
     
-    // MARK: - Define global meme text attributes
-    // Define text attributes
-    let memeTextAttributes = [
-        NSStrokeColorAttributeName: UIColor.blackColor(),
-        NSForegroundColorAttributeName: UIColor.whiteColor(),
-        NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
-        NSStrokeWidthAttributeName: -3.0
-    ]
-    
      // MARK: - View Lifecycle Methods
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -53,15 +44,19 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         // Format image to maintain aspect ratio
         imagePickerView.contentMode = UIViewContentMode.ScaleAspectFit
         
+        // Define text attributes
+        let memeTextAttributes = [
+            NSStrokeColorAttributeName: UIColor.blackColor(),
+            NSForegroundColorAttributeName: UIColor.whiteColor(),
+            NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
+            NSStrokeWidthAttributeName: -3.0
+        ]
+        
         // Set text attributes and alignment
         topTextField.defaultTextAttributes = memeTextAttributes
         bottomTextField.defaultTextAttributes = memeTextAttributes
         topTextField.textAlignment = NSTextAlignment.Center
         bottomTextField.textAlignment = NSTextAlignment.Center
-        
-//        // Set placeholder text for text fields
-        topTextField.attributedPlaceholder = NSAttributedString(string: "TOP", attributes: memeTextAttributes)
-        bottomTextField.attributedPlaceholder = NSAttributedString(string: "BOTTOM", attributes: memeTextAttributes)
         
         // Set text field delegates
         topTextField.delegate = self
@@ -105,31 +100,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // MARK: - Text field delegate methods
     func textFieldDidBeginEditing(textField: UITextField) {
-        textField.attributedPlaceholder = nil
-//        topTextField.defaultTextAttributes = memeTextAttributes
-//        topTextField.textAlignment = NSTextAlignment.Center
         
-//        // Hide placeholder text only if placeholder text is displayed
-//        if textField == topTextField && textField.text == topPlaceholderText {
-//            textField.text = ""
-//        }
-//        else if textField == bottomTextField && textField.text == bottomPlaceholderText {
-//            textField.text = ""
-//        }
+        // Hide placeholder text only if placeholder text is displayed
+        if textField == topTextField && textField.text == topPlaceholderText {
+            textField.text = ""
+        }
+        else if textField == bottomTextField && textField.text == bottomPlaceholderText {
+            textField.text = ""
+        }
     }
     
     func textFieldDidEndEditing(textField: UITextField) {
         // If textField is empty, show respective default placeholder text
         if textField.text == "" {
-            print("empty")
             if textField == topTextField {
-                textField.attributedPlaceholder = NSAttributedString(string: "TOP", attributes: memeTextAttributes)
-                print(textField.defaultTextAttributes)
-//                textField.text = topPlaceholderText
+                textField.text = topPlaceholderText
             }
             else {
-                textField.attributedPlaceholder = NSAttributedString(string: "BOTTOM", attributes: memeTextAttributes)
-//                textField.text = bottomPlaceholderText
+                textField.text = bottomPlaceholderText
             }
         }
     }
