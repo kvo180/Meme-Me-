@@ -42,6 +42,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        
         self.unsubscribeToKeyboardNotifications()
         self.unsubscribeToTextEnteredNotifications()
     }
@@ -98,23 +99,31 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @IBAction func shareMeme(sender: UIBarButtonItem) {
-        print("shared")
-        // TODO: generate a memed image 
-        // TODO: define an instance of the ActivityViewController 
-        // TODO: pass the ActivityViewController a memedImage as an activity item 
-        // TODO: present the ActivityViewController
+        // Generate a memed image 
+        let image = generateMemedImage()
+        
+        // Define an instance of the ActivityViewController and pass a memedImage as an activity item
+        let shareMemeViewController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+        
+        // Present the ActivityViewController
+        self.presentViewController(shareMemeViewController, animated: true, completion: nil)
     }
     
-    func generateMemeImage() -> UIImage {
+    // MARK: - Generate memedImage
+    func generateMemedImage() -> UIImage {
         // Hide toolbar and navbar
+        topNavBar.hidden = true
+        bottomToolbar.hidden = true
         
-        // Render view to an image
-        UIGraphicsBeginImageContext(self.view.frame.size)
+        // Render view to an image at 0.0 scale to preserve scale factor to device's main screen
+        UIGraphicsBeginImageContextWithOptions(self.view.frame.size, true, 0.0)
         self.view.drawViewHierarchyInRect(self.view.frame, afterScreenUpdates: true)
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
         // Show toolbar and navbar 
+        topNavBar.hidden = false
+        bottomToolbar.hidden = false
         
         return memedImage
     }
@@ -191,12 +200,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func subscribeToImageSelectedNotifications() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "enableShareButton", name: imageSelected, object: nil)
-        print("image picker subscribed")
     }
     
     func unsubscribeToImageSelectedNotifications() {
         NSNotificationCenter.defaultCenter().removeObserver(self, name: imageSelected, object: nil)
-        print("image picker unsubscribed")
     }
     
     func subscribeToTextEnteredNotifications() {

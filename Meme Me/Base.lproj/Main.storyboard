@@ -21,7 +21,7 @@
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="gp3-7S-wki">
                                 <rect key="frame" x="0.0" y="44" width="375" height="579"/>
-                                <color key="backgroundColor" red="0.29291442750000002" green="0.50481994159999999" blue="0.60101010099999996" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </imageView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oUJ-Pm-xca">
                                 <rect key="frame" x="0.0" y="623" width="375" height="44"/>
@@ -87,7 +87,7 @@
                                 </variation>
                             </textField>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="I4m-Bj-13K" secondAttribute="trailing" id="0pX-PA-UKK"/>
                             <constraint firstItem="oUJ-Pm-xca" firstAttribute="bottom" secondItem="kh9-bI-dsS" secondAttribute="bottomMargin" id="0uR-Da-kUl"/>
