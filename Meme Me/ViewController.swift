@@ -15,8 +15,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var cameraButton: UIBarButtonItem!
     @IBOutlet weak var topTextField: UITextField!
     @IBOutlet weak var bottomTextField: UITextField!
+    @IBOutlet weak var topNavBar: UIToolbar!
+    @IBOutlet weak var bottomToolbar: UIToolbar!
+    @IBOutlet weak var shareButton: UIBarButtonItem!
+    @IBOutlet weak var cancelButton: UIBarButtonItem!
     let topPlaceholderText:String = "TOP"
     let bottomPlaceholderText:String = "BOTTOM"
+    let imageSelected:String = "com.khoavo.imageSelectedNotificationKey"
+    let textEntered:String = "com.khoavo.textEnteredNotificationKey"
     
     // MARK: - Hide the status bar
     override func prefersStatusBarHidden() -> Bool {
@@ -31,11 +37,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         cameraButton.enabled = UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera)
         
         self.subscribeToKeyboardNotifications()
+        self.subscribeToTextEnteredNotifications()
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.unsubscribeToKeyboardNotifications()
+        self.unsubscribeToTextEnteredNotifications()
     }
     
     override func viewDidLoad() {
@@ -43,6 +51,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         // Format image to maintain aspect ratio
         imagePickerView.contentMode = UIViewContentMode.ScaleAspectFit
+        
+        // Set share button to be disable initially 
+        shareButton.enabled = false
         
         // Define text attributes
         let memeTextAttributes = [
@@ -74,6 +85,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         pickerController.delegate = self
         pickerController.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
         self.presentViewController(pickerController, animated: true, completion: nil)
+        subscribeToImageSelectedNotifications()
     }
     
     @IBAction func pickImageFromCamera(sender: AnyObject) {
@@ -82,20 +94,53 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         pickerController.delegate = self
         pickerController.sourceType = UIImagePickerControllerSourceType.Camera
         self.presentViewController(pickerController, animated: true, completion: nil)
+        subscribeToImageSelectedNotifications()
+    }
+    
+    @IBAction func shareMeme(sender: UIBarButtonItem) {
+        print("shared")
+        // TODO: generate a memed image 
+        // TODO: define an instance of the ActivityViewController 
+        // TODO: pass the ActivityViewController a memedImage as an activity item 
+        // TODO: present the ActivityViewController
+    }
+    
+    func generateMemeImage() -> UIImage {
+        // Hide toolbar and navbar
+        
+        // Render view to an image
+        UIGraphicsBeginImageContext(self.view.frame.size)
+        self.view.drawViewHierarchyInRect(self.view.frame, afterScreenUpdates: true)
+        let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        // Show toolbar and navbar 
+        
+        return memedImage
+    }
+    
+//    func save() {
+//        // Create the meme 
+//        let meme = Meme(text: textField.text!, image: imageView.image, memedImage: memedImage)
+//    }
+    
+    @IBAction func cancelButtonPressed(sender: UIBarButtonItem) {
     }
     
     // MARK: - Image picker delegate methods
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-        
         // Conditionally unwrap dictionary key and cast to UIImage
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
             self.imagePickerView.image = image
+            postImageSelectedNotification()
         }
         self.dismissViewControllerAnimated(true, completion: nil)
+        unsubscribeToImageSelectedNotifications()
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         self.dismissViewControllerAnimated(true, completion: nil)
+        unsubscribeToImageSelectedNotifications()
     }
     
     // MARK: - Text field delegate methods
@@ -120,6 +165,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 textField.text = bottomPlaceholderText
             }
         }
+        postTextEnteredNotification()
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
@@ -132,7 +178,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         self.view.endEditing(true)
     }
     
-    // MARK: - Move view when bottom text field is first responder
+    // MARK: - Manage Notifications
     func subscribeToKeyboardNotifications() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
@@ -143,6 +189,25 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
     
+    func subscribeToImageSelectedNotifications() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "enableShareButton", name: imageSelected, object: nil)
+        print("image picker subscribed")
+    }
+    
+    func unsubscribeToImageSelectedNotifications() {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: imageSelected, object: nil)
+        print("image picker unsubscribed")
+    }
+    
+    func subscribeToTextEnteredNotifications() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "enableShareButton", name: textEntered, object: nil)
+    }
+    
+    func unsubscribeToTextEnteredNotifications() {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: textEntered, object: nil)
+    }
+    
+    // MARK: - Move view when bottom text field is first responder
     // Move frame up when keyboardWillShowNotification is received
     func keyboardWillShow(notification: NSNotification) {
         if self.bottomTextField.isFirstResponder() {
@@ -169,6 +234,22 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return keyboardSize.CGRectValue().height
     }
     
+    // MARK: - Enable share button
+    func postImageSelectedNotification() {
+        NSNotificationCenter.defaultCenter().postNotificationName(imageSelected, object: self, userInfo: nil)
+    }
+    
+    func postTextEnteredNotification() {
+        NSNotificationCenter.defaultCenter().postNotificationName(textEntered, object: self, userInfo: nil)
+    }
+    
+    func enableShareButton() {
+        // Enable button when meme is complete
+        if self.imagePickerView.image != nil && topTextField.text != topPlaceholderText && bottomTextField.text != bottomPlaceholderText {
+            shareButton.enabled = true
+        }
+    }
+
 }
 
 

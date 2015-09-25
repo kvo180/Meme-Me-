@@ -49,9 +49,17 @@
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I4m-Bj-13K">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                 <items>
-                                    <barButtonItem systemItem="action" id="aos-ln-6bQ"/>
+                                    <barButtonItem systemItem="action" id="aos-ln-6bQ">
+                                        <connections>
+                                            <action selector="shareMeme:" destination="vXZ-lx-hvc" id="9lM-uC-Yo6"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="6Fh-cZ-DQZ"/>
-                                    <barButtonItem systemItem="cancel" id="dJn-CE-fVn"/>
+                                    <barButtonItem systemItem="cancel" id="dJn-CE-fVn">
+                                        <connections>
+                                            <action selector="cancelButtonPressed:" destination="vXZ-lx-hvc" id="Kt9-4F-5u4"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" placeholderIntrinsicWidth="343" placeholderIntrinsicHeight="32" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="TOP" textAlignment="center" minimumFontSize="20" translatesAutoresizingMaskIntoConstraints="NO" id="Mmg-3c-tvW">
@@ -190,8 +198,12 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
                         <outlet property="bottomTextField" destination="iuO-A3-ve3" id="5MX-9E-ENh"/>
+                        <outlet property="bottomToolbar" destination="oUJ-Pm-xca" id="Wrg-ay-zfJ"/>
                         <outlet property="cameraButton" destination="3OU-FZ-GOi" id="PZ1-cr-9qT"/>
+                        <outlet property="cancelButton" destination="dJn-CE-fVn" id="0IW-wL-8DN"/>
                         <outlet property="imagePickerView" destination="gp3-7S-wki" id="BKV-Q9-e6h"/>
+                        <outlet property="shareButton" destination="aos-ln-6bQ" id="lCH-6O-aCJ"/>
+                        <outlet property="topNavBar" destination="I4m-Bj-13K" id="ZOO-QX-3U4"/>
                         <outlet property="topTextField" destination="Mmg-3c-tvW" id="RZY-ie-OcU"/>
                     </connections>
                 </viewController>

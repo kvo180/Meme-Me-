@@ -13,6 +13,7 @@
 		9F301E6D1BA795F800474B43 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F301E6C1BA795F800474B43 /* Images.xcassets */; };
 		9F301E701BA795F800474B43 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F301E6E1BA795F800474B43 /* LaunchScreen.xib */; };
 		9F301E7C1BA795F800474B43 /* Meme_MeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F301E7B1BA795F800474B43 /* Meme_MeTests.swift */; };
+		9FD0D0691BB3955B004E65FF /* Meme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD0D0681BB3955B004E65FF /* Meme.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,7 @@
 		9F301E751BA795F800474B43 /* Meme MeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Meme MeTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F301E7A1BA795F800474B43 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9F301E7B1BA795F800474B43 /* Meme_MeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meme_MeTests.swift; sourceTree = "<group>"; };
+		9FD0D0681BB3955B004E65FF /* Meme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Meme.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 				9F301E651BA795F800474B43 /* AppDelegate.swift */,
 				9F301E671BA795F800474B43 /* ViewController.swift */,
 				9F301E691BA795F800474B43 /* Main.storyboard */,
+				9FD0D0681BB3955B004E65FF /* Meme.swift */,
 				9F301E6C1BA795F800474B43 /* Images.xcassets */,
 				9F301E6E1BA795F800474B43 /* LaunchScreen.xib */,
 				9F301E631BA795F800474B43 /* Supporting Files */,
@@ -214,6 +217,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FD0D0691BB3955B004E65FF /* Meme.swift in Sources */,
 				9F301E681BA795F800474B43 /* ViewController.swift in Sources */,
 				9F301E661BA795F800474B43 /* AppDelegate.swift in Sources */,
 			);
