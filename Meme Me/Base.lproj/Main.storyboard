@@ -20,10 +20,10 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="gp3-7S-wki">
-                                <rect key="frame" x="0.0" y="44" width="375" height="579"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" red="0.27272727272727271" green="0.27272727272727271" blue="0.27272727272727271" alpha="1" colorSpace="calibratedRGB"/>
                             </imageView>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oUJ-Pm-xca">
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" alpha="0.80000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oUJ-Pm-xca">
                                 <rect key="frame" x="0.0" y="623" width="375" height="44"/>
                                 <items>
                                     <barButtonItem width="100" style="plain" systemItem="fixedSpace" id="jzs-5R-4GH"/>
@@ -46,7 +46,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters"/>
                             </textField>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I4m-Bj-13K">
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" alpha="0.80000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I4m-Bj-13K">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                 <items>
                                     <barButtonItem systemItem="action" id="aos-ln-6bQ">
@@ -117,6 +117,7 @@
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="oUJ-Pm-xca" secondAttribute="bottom" id="OWf-iP-7Jg"/>
                             <constraint firstItem="Mmg-3c-tvW" firstAttribute="top" secondItem="I4m-Bj-13K" secondAttribute="bottom" constant="25" id="PyY-VW-btz"/>
                             <constraint firstItem="I4m-Bj-13K" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="RYg-C9-A20"/>
+                            <constraint firstItem="gp3-7S-wki" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="topMargin" id="TNY-cr-JkE"/>
                             <constraint firstItem="Mmg-3c-tvW" firstAttribute="top" secondItem="I4m-Bj-13K" secondAttribute="bottom" constant="30" id="TaX-rr-ZbK"/>
                             <constraint firstItem="Mmg-3c-tvW" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="TqY-kP-KBo"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="oUJ-Pm-xca" secondAttribute="bottom" id="U94-gR-xWi"/>
@@ -124,6 +125,7 @@
                             <constraint firstItem="Mmg-3c-tvW" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="VNI-aU-evz"/>
                             <constraint firstAttribute="centerX" secondItem="iuO-A3-ve3" secondAttribute="centerX" id="Vom-uL-ox8"/>
                             <constraint firstItem="oUJ-Pm-xca" firstAttribute="top" secondItem="iuO-A3-ve3" secondAttribute="bottom" constant="30" id="WcQ-9g-iK1"/>
+                            <constraint firstItem="gp3-7S-wki" firstAttribute="bottom" secondItem="kh9-bI-dsS" secondAttribute="bottomMargin" id="Wo2-Yp-dUu"/>
                             <constraint firstAttribute="trailing" secondItem="gp3-7S-wki" secondAttribute="trailing" id="XVL-zr-SA9"/>
                             <constraint firstItem="gp3-7S-wki" firstAttribute="top" secondItem="I4m-Bj-13K" secondAttribute="bottom" id="Y4S-jq-CEx"/>
                             <constraint firstItem="Mmg-3c-tvW" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="ZHH-T5-Tnk"/>
@@ -167,6 +169,7 @@
                                 <exclude reference="4he-j1-gjG"/>
                                 <exclude reference="DYs-fo-eL8"/>
                                 <exclude reference="UF8-lg-aCU"/>
+                                <exclude reference="Y4S-jq-CEx"/>
                                 <exclude reference="gTW-fv-InD"/>
                                 <exclude reference="k4a-c5-YJT"/>
                                 <exclude reference="xtu-2t-D8e"/>
@@ -183,6 +186,7 @@
                                 <exclude reference="Fxl-9h-wj1"/>
                                 <exclude reference="2vh-n1-pOU"/>
                                 <exclude reference="7JY-NX-oW4"/>
+                                <exclude reference="B4F-fX-X84"/>
                                 <exclude reference="LMO-QW-f8F"/>
                                 <exclude reference="WcQ-9g-iK1"/>
                                 <exclude reference="eKF-t6-hNZ"/>

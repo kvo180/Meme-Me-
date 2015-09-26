@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
+class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate {
     
     // MARK: - Properties and Outlets
     @IBOutlet weak var imagePickerView: UIImageView!
@@ -74,9 +74,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         topTextField.delegate = self
         bottomTextField.delegate = self
         
-        // Add tap gestures to dismiss keyboard when user taps outside of text field
+        // Add tap gestures
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
+        let hideShow: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "hideShowToolbar")
         view.addGestureRecognizer(tap)
+        view.addGestureRecognizer(hideShow)
+        
+        // Set tap gesture delegates
+        hideShow.delegate = self
     }
     
     // MARK: - IBActions
@@ -128,6 +133,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return memedImage
     }
     
+    //TODO: save meme
 //    func save() {
 //        // Create the meme 
 //        let meme = Meme(text: textField.text!, image: imageView.image, memedImage: memedImage)
@@ -182,9 +188,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return true
     }
     
-    // Close keyboard whenever user taps anywhere outside of keyboard:
-    func dismissKeyboard() {
-        self.view.endEditing(true)
+    // MARK: - Gesture recognizer delegate methods
+    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
+        if self.topTextField.isFirstResponder() || self.bottomTextField.isFirstResponder() {
+            return false
+        }
+        else {
+            return true
+        }
     }
     
     // MARK: - Manage Notifications
@@ -254,6 +265,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         // Enable button when meme is complete
         if self.imagePickerView.image != nil && topTextField.text != topPlaceholderText && bottomTextField.text != bottomPlaceholderText {
             shareButton.enabled = true
+        }
+    }
+    
+    // MARK: - Utilities
+    // Close keyboard whenever user taps anywhere outside of keyboard:
+    func dismissKeyboard() {
+        self.view.endEditing(true)
+    }
+    
+    // Hide/show navbar and toolbar
+    func hideShowToolbar() {
+        if topNavBar.hidden == false && bottomToolbar.hidden == false {
+            self.topNavBar.hidden = true
+            self.bottomToolbar.hidden = true
+        }
+        else {
+            self.topNavBar.hidden = false
+            self.bottomToolbar.hidden = false
         }
     }
 
