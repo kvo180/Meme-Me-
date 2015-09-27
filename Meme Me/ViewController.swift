@@ -164,9 +164,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         topNavBar.hidden = true
         bottomToolbar.hidden = true
         
-        // Render view to an image at 0.0 scale to preserve scale factor to device's main screen
-        UIGraphicsBeginImageContextWithOptions(self.view.frame.size, true, 0.0)
-        self.view.drawViewHierarchyInRect(self.view.frame, afterScreenUpdates: true)
+        // Set screenshot to image size and render image at 0.0 scale to preserve scale factor of device's screen
+        UIGraphicsBeginImageContextWithOptions(aspectRatioRect.size, true, 0.0)
+        let landscape = self.view.frame.width > self.view.frame.height
+        if landscape {
+            saveLandscapeImage()
+        }
+        else {
+            savePortraitImage()
+        }
+        
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
@@ -175,6 +182,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         bottomToolbar.hidden = false
         
         return memedImage
+    }
+    
+    func savePortraitImage() {
+        let saveImageRect = CGRectMake(aspectRatioRect.origin.x, -aspectRatioRect.origin.y, self.view.frame.width, self.view.frame.height)
+        self.view.drawViewHierarchyInRect(saveImageRect, afterScreenUpdates: true)
+    }
+    
+    func saveLandscapeImage() {
+        let saveImageRect = CGRectMake(-aspectRatioRect.origin.x, aspectRatioRect.origin.y, self.view.frame.width, self.view.frame.height)
+        self.view.drawViewHierarchyInRect(saveImageRect, afterScreenUpdates: true)
     }
     
     //TODO: save meme
@@ -198,6 +215,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             
             // Determine height of scaled image inside imageView
             aspectRatioRect = AVMakeRectWithAspectRatioInsideRect(userImage.size, imagePickerView.bounds)
+            print(aspectRatioRect)
             positionTextFields(imagePickerView.bounds)
         }
         self.dismissViewControllerAnimated(true, completion: nil)
