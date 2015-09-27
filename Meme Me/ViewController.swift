@@ -7,22 +7,27 @@
 //
 
 import UIKit
+import AVFoundation
 
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate {
     
     // MARK: - Properties and Outlets
     @IBOutlet weak var imagePickerView: UIImageView!
-    @IBOutlet weak var cameraButton: UIBarButtonItem!
     @IBOutlet weak var topTextField: UITextField!
     @IBOutlet weak var bottomTextField: UITextField!
     @IBOutlet weak var topNavBar: UIToolbar!
     @IBOutlet weak var bottomToolbar: UIToolbar!
+    @IBOutlet weak var cameraButton: UIBarButtonItem!
     @IBOutlet weak var shareButton: UIBarButtonItem!
     @IBOutlet weak var cancelButton: UIBarButtonItem!
+    @IBOutlet weak var infoLabel: UILabel!
+    @IBOutlet weak var topTextFieldVerticalConstraint: NSLayoutConstraint!
+    @IBOutlet weak var bottomTextFieldVerticalConstraint: NSLayoutConstraint!
     let topPlaceholderText:String = "TOP"
     let bottomPlaceholderText:String = "BOTTOM"
     let imageSelected:String = "com.khoavo.imageSelectedNotificationKey"
     let textEntered:String = "com.khoavo.textEnteredNotificationKey"
+    let orientation: UIDeviceOrientation = UIDevice.currentDevice().orientation
     
     // MARK: - Hide the status bar
     override func prefersStatusBarHidden() -> Bool {
@@ -53,8 +58,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         // Format image to maintain aspect ratio
         imagePickerView.contentMode = UIViewContentMode.ScaleAspectFit
         
-        // Set share button to be disable initially 
+        // Set buttons to be disabled initially
         shareButton.enabled = false
+        cancelButton.enabled = false
         
         // Define text attributes
         let memeTextAttributes = [
@@ -69,6 +75,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         bottomTextField.defaultTextAttributes = memeTextAttributes
         topTextField.textAlignment = NSTextAlignment.Center
         bottomTextField.textAlignment = NSTextAlignment.Center
+        hideTextFields()
         
         // Set text field delegates
         topTextField.delegate = self
@@ -76,7 +83,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         // Add tap gestures
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
-        let hideShow: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "hideShowToolbar")
+        let hideShow: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "hideShowToolbars")
         view.addGestureRecognizer(tap)
         view.addGestureRecognizer(hideShow)
         
@@ -114,6 +121,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         self.presentViewController(shareMemeViewController, animated: true, completion: nil)
     }
     
+    // Reset meme editor to initial conditions
+    @IBAction func cancelButtonPressed(sender: UIBarButtonItem) {
+        imagePickerView.image = nil
+        hideTextFields()
+        topTextField.text = topPlaceholderText
+        bottomTextField.text = bottomPlaceholderText
+        infoLabel.hidden = false
+        infoLabel.text = "select an image"
+        shareButton.enabled = false
+        cancelButton.enabled = false
+    }
+    
     // MARK: - Generate memedImage
     func generateMemedImage() -> UIImage {
         // Hide toolbar and navbar
@@ -139,18 +158,29 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 //        let meme = Meme(text: textField.text!, image: imageView.image, memedImage: memedImage)
 //    }
     
-    @IBAction func cancelButtonPressed(sender: UIBarButtonItem) {
-    }
-    
     // MARK: - Image picker delegate methods
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         // Conditionally unwrap dictionary key and cast to UIImage
-        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            self.imagePickerView.image = image
+        if let userImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            self.imagePickerView.image = userImage
+            // Post image notifications
             postImageSelectedNotification()
+            
+            // Show textfields and set info label text
+            infoLabel.text = "enter meme text"
+            showTextFields()
+            
+            // Determine height of scaled image inside imageView
+            let rect = AVMakeRectWithAspectRatioInsideRect(userImage.size, imagePickerView.bounds)
+            positionTextFields(rect)
+            
         }
         self.dismissViewControllerAnimated(true, completion: nil)
         unsubscribeToImageSelectedNotifications()
+    }
+    
+    func deviceRotated() {
+//        print(self.imagePickerView.image?.size)
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
@@ -160,7 +190,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // MARK: - Text field delegate methods
     func textFieldDidBeginEditing(textField: UITextField) {
-        
+        infoLabel.hidden = true
         // Hide placeholder text only if placeholder text is displayed
         if textField == topTextField && textField.text == topPlaceholderText {
             textField.text = ""
@@ -211,6 +241,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func subscribeToImageSelectedNotifications() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "enableShareButton", name: imageSelected, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "enableCancelButton", name: imageSelected, object: nil)
     }
     
     func unsubscribeToImageSelectedNotifications() {
@@ -252,7 +283,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return keyboardSize.CGRectValue().height
     }
     
-    // MARK: - Enable share button
+    // MARK: - Enable share and cancel buttons
     func postImageSelectedNotification() {
         NSNotificationCenter.defaultCenter().postNotificationName(imageSelected, object: self, userInfo: nil)
     }
@@ -261,31 +292,60 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         NSNotificationCenter.defaultCenter().postNotificationName(textEntered, object: self, userInfo: nil)
     }
     
+    // Enable share button when meme is complete
     func enableShareButton() {
-        // Enable button when meme is complete
         if self.imagePickerView.image != nil && topTextField.text != topPlaceholderText && bottomTextField.text != bottomPlaceholderText {
             shareButton.enabled = true
         }
     }
     
+    // Enable cancel button after user selects an image
+    func enableCancelButton() {
+        cancelButton.enabled = true
+    }
+    
     // MARK: - Utilities
+    func positionTextFields(aspectRatioRect: CGRect) {
+        
+        // Calculate text field vertical spacing
+        let verticalSpacing = (imagePickerView.bounds.height - aspectRatioRect.size.height) / 2
+        
+        // Position text fields inside scaled image
+        topTextFieldVerticalConstraint.constant = verticalSpacing
+        bottomTextFieldVerticalConstraint.constant = verticalSpacing
+    }
+    
     // Close keyboard whenever user taps anywhere outside of keyboard:
     func dismissKeyboard() {
         self.view.endEditing(true)
     }
     
     // Hide/show navbar and toolbar
-    func hideShowToolbar() {
+    func hideShowToolbars() {
         if topNavBar.hidden == false && bottomToolbar.hidden == false {
-            self.topNavBar.hidden = true
-            self.bottomToolbar.hidden = true
+            topNavBar.hidden = true
+            bottomToolbar.hidden = true
         }
         else {
-            self.topNavBar.hidden = false
-            self.bottomToolbar.hidden = false
+            topNavBar.hidden = false
+            bottomToolbar.hidden = false
         }
+    }
+    
+    func hideTextFields() {
+        topTextField.hidden = true
+        bottomTextField.hidden = true
+    }
+    
+    func showTextFields() {
+        topTextField.hidden = false
+        bottomTextField.hidden = false
     }
 
 }
 
-
+// Position text fields within user's image depending on device orientation
+// Add code to make Cancel button work
+// Add info label to notify user to select image 
+// Hide top and bottom text fields initially until an image is selected
+// Rearrange order of textfields and toolbars so no overlapping occurs
