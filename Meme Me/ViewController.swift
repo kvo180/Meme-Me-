@@ -25,9 +25,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var bottomTextFieldVerticalConstraint: NSLayoutConstraint!
     let topPlaceholderText:String = "TOP"
     let bottomPlaceholderText:String = "BOTTOM"
-    let imageSelected:String = "com.khoavo.imageSelectedNotificationKey"
-    let textEntered:String = "com.khoavo.textEnteredNotificationKey"
-    let orientation: UIDeviceOrientation = UIDevice.currentDevice().orientation
+    let imageSelected:String = "com.khoavo.imageSelectedNotificationKey" // Initialize key to notify that an image has been selected
+    let textEntered:String = "com.khoavo.textEnteredNotificationKey" // Initialize key to notify that the text field has been edited
+    var imageExists: Bool = false
+    var aspectRatioRect: CGRect = CGRectMake(0.0, 0.0, 0.0, 0.0) // Initialize an empty global CGRect that will contain the size of the user's scaled image
+    var verticalSpacing: CGFloat!
+    
+    // Define text attributes
+    let memeTextAttributes = [
+        NSStrokeColorAttributeName: UIColor.blackColor(),
+        NSForegroundColorAttributeName: UIColor.whiteColor(),
+        NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 45)!,
+        NSStrokeWidthAttributeName: -3.0
+    ]
+    
+    let labelTextAttributes = [NSStrokeColorAttributeName: UIColor.blackColor(),
+        NSForegroundColorAttributeName: UIColor.whiteColor(),
+        NSFontAttributeName: UIFont(name: "HelveticaNeue", size: 28)!,
+        NSStrokeWidthAttributeName: -3.0]
     
     // MARK: - Hide the status bar
     override func prefersStatusBarHidden() -> Bool {
@@ -55,20 +70,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Format image to maintain aspect ratio
+        // Set imageView to maintain image's aspect ratio
         imagePickerView.contentMode = UIViewContentMode.ScaleAspectFit
         
         // Set buttons to be disabled initially
         shareButton.enabled = false
         cancelButton.enabled = false
-        
-        // Define text attributes
-        let memeTextAttributes = [
-            NSStrokeColorAttributeName: UIColor.blackColor(),
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
-            NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
-            NSStrokeWidthAttributeName: -3.0
-        ]
         
         // Set text attributes and alignment
         topTextField.defaultTextAttributes = memeTextAttributes
@@ -76,6 +83,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         topTextField.textAlignment = NSTextAlignment.Center
         bottomTextField.textAlignment = NSTextAlignment.Center
         hideTextFields()
+        infoLabel.attributedText = NSAttributedString(string: "select an image", attributes: labelTextAttributes)
         
         // Set text field delegates
         topTextField.delegate = self
@@ -89,6 +97,22 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         // Set tap gesture delegates
         hideShow.delegate = self
+    }
+    
+    // Handle text field positioning when screen orientation changes
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        /* Note: this method will only return the imageView's CGRect value BEFORE the screen orientation changes, 
+        therefore must get imageView's CGRect after screen orientation change from getRotatedImageViewBounds() 
+        in order for text fields to be positioned correctly. */
+        
+        // Only run when an image is selected, otherewise image is nil and will cause an exception
+        if imageExists {
+            // Get imageView's rectangle after screen orientation has changed
+            let imageViewBounds = getRotatedImageViewBounds()
+            
+            aspectRatioRect = AVMakeRectWithAspectRatioInsideRect(imagePickerView.image!.size, imageViewBounds)
+            positionTextFields(imageViewBounds)
+        }
     }
     
     // MARK: - IBActions
@@ -123,12 +147,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // Reset meme editor to initial conditions
     @IBAction func cancelButtonPressed(sender: UIBarButtonItem) {
+        imageExists = false
         imagePickerView.image = nil
         hideTextFields()
         topTextField.text = topPlaceholderText
         bottomTextField.text = bottomPlaceholderText
         infoLabel.hidden = false
-        infoLabel.text = "select an image"
+        infoLabel.attributedText = NSAttributedString(string: "select an image", attributes: labelTextAttributes)
         shareButton.enabled = false
         cancelButton.enabled = false
     }
@@ -162,25 +187,21 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         // Conditionally unwrap dictionary key and cast to UIImage
         if let userImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            self.imagePickerView.image = userImage
+            imagePickerView.image = userImage
             // Post image notifications
             postImageSelectedNotification()
+            imageExists = true
             
             // Show textfields and set info label text
-            infoLabel.text = "enter meme text"
+            infoLabel.attributedText = NSAttributedString(string: "enter meme text", attributes: labelTextAttributes)
             showTextFields()
             
             // Determine height of scaled image inside imageView
-            let rect = AVMakeRectWithAspectRatioInsideRect(userImage.size, imagePickerView.bounds)
-            positionTextFields(rect)
-            
+            aspectRatioRect = AVMakeRectWithAspectRatioInsideRect(userImage.size, imagePickerView.bounds)
+            positionTextFields(imagePickerView.bounds)
         }
         self.dismissViewControllerAnimated(true, completion: nil)
         unsubscribeToImageSelectedNotifications()
-    }
-    
-    func deviceRotated() {
-//        print(self.imagePickerView.image?.size)
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
@@ -219,8 +240,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     // MARK: - Gesture recognizer delegate methods
+    // Disable hide/show toolbars when user is editing to allow user to end editing by tapping outside of text field
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
-        if self.topTextField.isFirstResponder() || self.bottomTextField.isFirstResponder() {
+        if topTextField.isFirstResponder() || bottomTextField.isFirstResponder() {
             return false
         }
         else {
@@ -259,7 +281,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     // MARK: - Move view when bottom text field is first responder
     // Move frame up when keyboardWillShowNotification is received
     func keyboardWillShow(notification: NSNotification) {
-        if self.bottomTextField.isFirstResponder() {
+        if bottomTextField.isFirstResponder() {
             UIView.animateWithDuration(0.5, animations: {
                 self.view.frame.origin.y -= self.getKeyboardHeight(notification)
             })
@@ -269,7 +291,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     // Move frame back to initial position when keyboardWillHideNotification is received
     func keyboardWillHide(notification: NSNotification) {
         let initialViewRect: CGRect = CGRectMake(0.0, 0.0, self.view.frame.size.width, self.view.frame.size.height)
-        if self.bottomTextField.isFirstResponder() {
+        if bottomTextField.isFirstResponder() {
             UIView.animateWithDuration(0.5, animations: {
                 self.view.frame = initialViewRect
                 })
@@ -294,7 +316,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // Enable share button when meme is complete
     func enableShareButton() {
-        if self.imagePickerView.image != nil && topTextField.text != topPlaceholderText && bottomTextField.text != bottomPlaceholderText {
+        if imageExists && topTextField.text != topPlaceholderText && bottomTextField.text != bottomPlaceholderText {
             shareButton.enabled = true
         }
     }
@@ -305,10 +327,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     // MARK: - Utilities
-    func positionTextFields(aspectRatioRect: CGRect) {
+    
+    // Returns a CGRect of the imageView after it has rotated
+    func getRotatedImageViewBounds () -> CGRect {
+        let imageViewWidth = imagePickerView.bounds.height
+        let imageViewHeight = imagePickerView.bounds.width
+        let imageViewBounds = CGRectMake(0.0, 0.0, imageViewWidth, imageViewHeight)
+        
+        return imageViewBounds
+    }
+    
+    // Position text fields vertically within user's selected image
+    func positionTextFields(imageViewBounds: CGRect) {
+        
+        // Get height of imageView
+        let imageViewHeight = imageViewBounds.size.height
         
         // Calculate text field vertical spacing
-        let verticalSpacing = (imagePickerView.bounds.height - aspectRatioRect.size.height) / 2
+        verticalSpacing = (imageViewHeight - aspectRatioRect.size.height) / 2
         
         // Position text fields inside scaled image
         topTextFieldVerticalConstraint.constant = verticalSpacing
@@ -343,9 +379,3 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
 
 }
-
-// Position text fields within user's image depending on device orientation
-// Add code to make Cancel button work
-// Add info label to notify user to select image 
-// Hide top and bottom text fields initially until an image is selected
-// Rearrange order of textfields and toolbars so no overlapping occurs
