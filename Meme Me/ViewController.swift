@@ -30,6 +30,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     var imageExists: Bool = false
     var aspectRatioRect: CGRect = CGRectMake(0.0, 0.0, 0.0, 0.0) // Initialize an empty global CGRect that will contain the size of the user's scaled image
     var verticalSpacing: CGFloat!
+    var meme: Meme! // Initialize meme model object
     
     // Define text attributes
     let memeTextAttributes = [
@@ -105,20 +106,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // Handle text field positioning when screen orientation changes
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+         /* To make repositioning text fields animation less abrupt, hide text fields before repositioning them, 
+        then show them after they've been repositioned. */
         
-        
-//        if imageExists {
-//            // Get imageView's rectangle after screen orientation has changed
-//            let imageViewBounds = getRotatedImageViewBounds()
-//            
-//            aspectRatioRect = AVMakeRectWithAspectRatioInsideRect(imagePickerView.image!.size, imageViewBounds)
-//            positionTextFields(imageViewBounds)
-//        }
+        hideTextFields()
         
         coordinator.animateAlongsideTransition(nil, completion: {context in
             // Only run when an image is selected, otherwise image is nil and will cause an exception
             if self.imageExists {
-                self.hideTextFields()
                 self.positionTextFields()
                 self.showTextFields()
             }
@@ -131,7 +126,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let pickerController = UIImagePickerController()
         pickerController.delegate = self
         pickerController.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
-        self.presentViewController(pickerController, animated: true, completion: nil)
+        presentViewController(pickerController, animated: true, completion: nil)
         subscribeToImageSelectedNotifications()
     }
     
@@ -140,7 +135,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let pickerController = UIImagePickerController()
         pickerController.delegate = self
         pickerController.sourceType = UIImagePickerControllerSourceType.Camera
-        self.presentViewController(pickerController, animated: true, completion: nil)
+        presentViewController(pickerController, animated: true, completion: nil)
         subscribeToImageSelectedNotifications()
     }
     
@@ -152,7 +147,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let shareMemeViewController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
         
         // Present the ActivityViewController
-        self.presentViewController(shareMemeViewController, animated: true, completion: nil)
+        presentViewController(shareMemeViewController, animated: true, completion: nil)
+        
+        // Save the meme
+        shareMemeViewController.completionWithItemsHandler = { (activity: String?, success: Bool, items: [AnyObject]?, error: NSError?) in
+            if success {
+                self.saveMeme(image)
+                print("meme saved")
+            }
+            self.dismissViewControllerAnimated(true, completion: nil)
+        }
     }
     
     // Reset meme editor to initial conditions
@@ -203,12 +207,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let saveImageRect = CGRectMake(-aspectRatioRect.origin.x, aspectRatioRect.origin.y, self.view.frame.width, self.view.frame.height)
         self.view.drawViewHierarchyInRect(saveImageRect, afterScreenUpdates: true)
     }
-    
-    //TODO: save meme
-//    func save() {
-//        // Create the meme 
-//        let meme = Meme(text: textField.text!, image: imageView.image, memedImage: memedImage)
-//    }
     
     // MARK: - Image picker delegate methods
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
@@ -352,15 +350,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     // MARK: - Utilities
-    
-//    // Returns a CGRect of the imageView after it has rotated
-//    func getRotatedImageViewBounds () -> CGRect {
-//        let imageViewWidth = imagePickerView.bounds.height
-//        let imageViewHeight = imagePickerView.bounds.width
-//        let imageViewBounds = CGRectMake(0.0, 0.0, imageViewWidth, imageViewHeight)
-//        
-//        return imageViewBounds
-//    }
+    // Generate meme model object
+    func saveMeme(memedImage: UIImage) {
+        meme = Meme(topText: topTextField.text!, bottomText: bottomTextField.text!, image: imagePickerView.image!, memedImage: memedImage)
+    }
     
     // Position text fields vertically within user's selected image
     func positionTextFields() {
