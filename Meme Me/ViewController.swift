@@ -35,7 +35,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     let memeTextAttributes = [
         NSStrokeColorAttributeName: UIColor.blackColor(),
         NSForegroundColorAttributeName: UIColor.whiteColor(),
-        NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 45)!,
+        NSFontAttributeName: UIFont(name: "Impact", size: 45)!,
         NSStrokeWidthAttributeName: -3.0
     ]
     
@@ -77,6 +77,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         shareButton.enabled = false
         cancelButton.enabled = false
         
+        // Set toolbar and nav bar visibility 
+        topNavBar.alpha = 0.8
+        bottomToolbar.alpha = 0.8
+        
         // Set text attributes and alignment
         topTextField.defaultTextAttributes = memeTextAttributes
         bottomTextField.defaultTextAttributes = memeTextAttributes
@@ -101,18 +105,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // Handle text field positioning when screen orientation changes
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-        /* Note: this method will only return the imageView's CGRect value BEFORE the screen orientation changes, 
-        therefore must get imageView's CGRect after screen orientation change from getRotatedImageViewBounds() 
-        in order for text fields to be positioned correctly. */
         
-        // Only run when an image is selected, otherewise image is nil and will cause an exception
-        if imageExists {
-            // Get imageView's rectangle after screen orientation has changed
-            let imageViewBounds = getRotatedImageViewBounds()
-            
-            aspectRatioRect = AVMakeRectWithAspectRatioInsideRect(imagePickerView.image!.size, imageViewBounds)
-            positionTextFields(imageViewBounds)
-        }
+        
+//        if imageExists {
+//            // Get imageView's rectangle after screen orientation has changed
+//            let imageViewBounds = getRotatedImageViewBounds()
+//            
+//            aspectRatioRect = AVMakeRectWithAspectRatioInsideRect(imagePickerView.image!.size, imageViewBounds)
+//            positionTextFields(imageViewBounds)
+//        }
+        
+        coordinator.animateAlongsideTransition(nil, completion: {context in
+            // Only run when an image is selected, otherwise image is nil and will cause an exception
+            if self.imageExists {
+                self.hideTextFields()
+                self.positionTextFields()
+                self.showTextFields()
+            }
+        })
     }
     
     // MARK: - IBActions
@@ -213,10 +223,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             infoLabel.attributedText = NSAttributedString(string: "enter meme text", attributes: labelTextAttributes)
             showTextFields()
             
-            // Determine height of scaled image inside imageView
-            aspectRatioRect = AVMakeRectWithAspectRatioInsideRect(userImage.size, imagePickerView.bounds)
-            print(aspectRatioRect)
-            positionTextFields(imagePickerView.bounds)
+            positionTextFields()
         }
         self.dismissViewControllerAnimated(true, completion: nil)
         unsubscribeToImageSelectedNotifications()
@@ -346,23 +353,22 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // MARK: - Utilities
     
-    // Returns a CGRect of the imageView after it has rotated
-    func getRotatedImageViewBounds () -> CGRect {
-        let imageViewWidth = imagePickerView.bounds.height
-        let imageViewHeight = imagePickerView.bounds.width
-        let imageViewBounds = CGRectMake(0.0, 0.0, imageViewWidth, imageViewHeight)
-        
-        return imageViewBounds
-    }
+//    // Returns a CGRect of the imageView after it has rotated
+//    func getRotatedImageViewBounds () -> CGRect {
+//        let imageViewWidth = imagePickerView.bounds.height
+//        let imageViewHeight = imagePickerView.bounds.width
+//        let imageViewBounds = CGRectMake(0.0, 0.0, imageViewWidth, imageViewHeight)
+//        
+//        return imageViewBounds
+//    }
     
     // Position text fields vertically within user's selected image
-    func positionTextFields(imageViewBounds: CGRect) {
-        
-        // Get height of imageView
-        let imageViewHeight = imageViewBounds.size.height
+    func positionTextFields() {
+        // Get CGRect of scaled image
+        aspectRatioRect = AVMakeRectWithAspectRatioInsideRect(imagePickerView.image!.size, imagePickerView.bounds)
         
         // Calculate text field vertical spacing
-        verticalSpacing = (imageViewHeight - aspectRatioRect.size.height) / 2
+        verticalSpacing = (imagePickerView.bounds.height - aspectRatioRect.size.height) / 2
         
         // Position text fields inside scaled image
         topTextFieldVerticalConstraint.constant = verticalSpacing
@@ -376,24 +382,33 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // Hide/show navbar and toolbar
     func hideShowToolbars() {
-        if topNavBar.hidden == false && bottomToolbar.hidden == false {
-            topNavBar.hidden = true
-            bottomToolbar.hidden = true
+        // If toolbars are visible, hide them
+        if topNavBar.alpha >= 0.8 && bottomToolbar.alpha >= 0.8 {
+            UIView.animateWithDuration(0.3, animations: {
+                self.topNavBar.alpha = 0
+                self.bottomToolbar.alpha = 0
+            })
         }
         else {
-            topNavBar.hidden = false
-            bottomToolbar.hidden = false
+            UIView.animateWithDuration(0.3, animations: {
+                self.topNavBar.alpha = 0.8
+                self.bottomToolbar.alpha = 0.8
+            })
         }
     }
     
     func hideTextFields() {
-        topTextField.hidden = true
-        bottomTextField.hidden = true
+        UIView.animateWithDuration(0.3, animations: {
+            self.topTextField.alpha = 0
+            self.bottomTextField.alpha = 0
+        })
     }
     
     func showTextFields() {
-        topTextField.hidden = false
-        bottomTextField.hidden = false
+        UIView.animateWithDuration(0.3, animations: {
+            self.topTextField.alpha = 1
+            self.bottomTextField.alpha = 1
+        })
     }
-
+    
 }

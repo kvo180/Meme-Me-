@@ -14,6 +14,8 @@
 		9F301E701BA795F800474B43 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F301E6E1BA795F800474B43 /* LaunchScreen.xib */; };
 		9F301E7C1BA795F800474B43 /* Meme_MeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F301E7B1BA795F800474B43 /* Meme_MeTests.swift */; };
 		9FD0D0691BB3955B004E65FF /* Meme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD0D0681BB3955B004E65FF /* Meme.swift */; settings = {ASSET_TAGS = (); }; };
+		9FD0D06D1BB7F0EA004E65FF /* ufonts.com_impact.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD0D06C1BB7F0EA004E65FF /* ufonts.com_impact.ttf */; settings = {ASSET_TAGS = (); }; };
+		9FD0D06F1BB7F14A004E65FF /* ufonts.com_impact.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD0D06C1BB7F0EA004E65FF /* ufonts.com_impact.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +40,7 @@
 		9F301E7A1BA795F800474B43 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9F301E7B1BA795F800474B43 /* Meme_MeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meme_MeTests.swift; sourceTree = "<group>"; };
 		9FD0D0681BB3955B004E65FF /* Meme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Meme.swift; sourceTree = "<group>"; };
+		9FD0D06C1BB7F0EA004E65FF /* ufonts.com_impact.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ufonts.com_impact.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +64,7 @@
 		9F301E571BA795F800474B43 = {
 			isa = PBXGroup;
 			children = (
+				9FD0D06E1BB7F101004E65FF /* Resources */,
 				9F301E621BA795F800474B43 /* Meme Me */,
 				9F301E781BA795F800474B43 /* Meme MeTests */,
 				9F301E611BA795F800474B43 /* Products */,
@@ -113,6 +117,14 @@
 				9F301E7A1BA795F800474B43 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		9FD0D06E1BB7F101004E65FF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9FD0D06C1BB7F0EA004E65FF /* ufonts.com_impact.ttf */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -199,6 +211,7 @@
 			files = (
 				9F301E6B1BA795F800474B43 /* Main.storyboard in Resources */,
 				9F301E701BA795F800474B43 /* LaunchScreen.xib in Resources */,
+				9FD0D06D1BB7F0EA004E65FF /* ufonts.com_impact.ttf in Resources */,
 				9F301E6D1BA795F800474B43 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -207,6 +220,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FD0D06F1BB7F14A004E65FF /* ufonts.com_impact.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
