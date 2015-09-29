@@ -30,7 +30,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     var imageExists: Bool = false
     var aspectRatioRect: CGRect = CGRectMake(0.0, 0.0, 0.0, 0.0) // Initialize an empty global CGRect that will contain the size of the user's scaled image
     var verticalSpacing: CGFloat!
-    var meme: Meme! // Initialize meme model object
+    var meme = Meme()
     
     // Define text attributes
     let memeTextAttributes = [
@@ -57,15 +57,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         // Disable camera button if source is not available, otherwise fatal exception will be thrown
         cameraButton.enabled = UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera)
         
-        self.subscribeToKeyboardNotifications()
-        self.subscribeToTextEnteredNotifications()
+        subscribeToKeyboardNotifications()
+        subscribeToTextEnteredNotifications()
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        self.unsubscribeToKeyboardNotifications()
-        self.unsubscribeToTextEnteredNotifications()
+        unsubscribeToKeyboardNotifications()
+        unsubscribeToTextEnteredNotifications()
     }
     
     override func viewDidLoad() {
@@ -153,7 +153,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         shareMemeViewController.completionWithItemsHandler = { (activity: String?, success: Bool, items: [AnyObject]?, error: NSError?) in
             if success {
                 self.saveMeme(image)
-                print("meme saved")
             }
             self.dismissViewControllerAnimated(true, completion: nil)
         }
@@ -180,7 +179,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         // Set screenshot to image size and render image at 0.0 scale to preserve scale factor of device's screen
         UIGraphicsBeginImageContextWithOptions(aspectRatioRect.size, true, 0.0)
-        let landscape = self.view.frame.width > self.view.frame.height
+        let landscape = view.frame.width > view.frame.height
         if landscape {
             saveLandscapeImage()
         }
@@ -199,13 +198,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     func savePortraitImage() {
-        let saveImageRect = CGRectMake(aspectRatioRect.origin.x, -aspectRatioRect.origin.y, self.view.frame.width, self.view.frame.height)
-        self.view.drawViewHierarchyInRect(saveImageRect, afterScreenUpdates: true)
+        let saveImageRect = CGRectMake(aspectRatioRect.origin.x, -aspectRatioRect.origin.y, view.frame.width, view.frame.height)
+        view.drawViewHierarchyInRect(saveImageRect, afterScreenUpdates: true)
     }
     
     func saveLandscapeImage() {
-        let saveImageRect = CGRectMake(-aspectRatioRect.origin.x, aspectRatioRect.origin.y, self.view.frame.width, self.view.frame.height)
-        self.view.drawViewHierarchyInRect(saveImageRect, afterScreenUpdates: true)
+        let saveImageRect = CGRectMake(-aspectRatioRect.origin.x, aspectRatioRect.origin.y, view.frame.width, view.frame.height)
+        view.drawViewHierarchyInRect(saveImageRect, afterScreenUpdates: true)
     }
     
     // MARK: - Image picker delegate methods
@@ -223,12 +222,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             
             positionTextFields()
         }
-        self.dismissViewControllerAnimated(true, completion: nil)
+        dismissViewControllerAnimated(true, completion: nil)
         unsubscribeToImageSelectedNotifications()
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+        dismissViewControllerAnimated(true, completion: nil)
         unsubscribeToImageSelectedNotifications()
     }
     
@@ -313,7 +312,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // Move frame back to initial position when keyboardWillHideNotification is received
     func keyboardWillHide(notification: NSNotification) {
-        let initialViewRect: CGRect = CGRectMake(0.0, 0.0, self.view.frame.size.width, self.view.frame.size.height)
+        let initialViewRect: CGRect = CGRectMake(0.0, 0.0, view.frame.size.width, view.frame.size.height)
         if bottomTextField.isFirstResponder() {
             UIView.animateWithDuration(0.5, animations: {
                 self.view.frame = initialViewRect
@@ -352,7 +351,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     // MARK: - Utilities
     // Generate meme model object
     func saveMeme(memedImage: UIImage) {
-        meme = Meme(topText: topTextField.text!, bottomText: bottomTextField.text!, image: imagePickerView.image!, memedImage: memedImage)
+        meme.topText = topTextField.text!
+        meme.bottomText = bottomTextField.text!
+        meme.image = imagePickerView.image!
+        meme.memedImage = memedImage
     }
     
     // Position text fields vertically within user's selected image
@@ -370,7 +372,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // Close keyboard whenever user taps anywhere outside of keyboard:
     func dismissKeyboard() {
-        self.view.endEditing(true)
+        view.endEditing(true)
     }
     
     // Hide/show navbar and toolbar
