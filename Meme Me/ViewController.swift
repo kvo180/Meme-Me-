@@ -305,7 +305,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     func keyboardWillShow(notification: NSNotification) {
         if bottomTextField.isFirstResponder() {
             UIView.animateWithDuration(0.5, animations: {
-                self.view.frame.origin.y -= self.getKeyboardHeight(notification)
+                self.view.frame.origin.y = -self.getKeyboardHeight(notification)
             })
         }
     }
