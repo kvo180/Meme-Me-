@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MemeEditorViewController.swift
 //  Meme Me
 //
 //  Created by Khoa Vo on 9/14/15.
@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate {
+class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate {
     
     // MARK: - Properties and Outlets
     @IBOutlet weak var imagePickerView: UIImageView!
@@ -20,6 +20,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var cameraButton: UIBarButtonItem!
     @IBOutlet weak var shareButton: UIBarButtonItem!
     @IBOutlet weak var cancelButton: UIBarButtonItem!
+    @IBOutlet weak var resetButton: UIBarButtonItem!
     @IBOutlet weak var infoLabel: UILabel!
     @IBOutlet weak var topTextFieldVerticalConstraint: NSLayoutConstraint!
     @IBOutlet weak var bottomTextFieldVerticalConstraint: NSLayoutConstraint!
@@ -76,7 +77,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         // Set buttons to be disabled initially
         shareButton.enabled = false
-        cancelButton.enabled = false
+        resetButton.enabled = false
         
         // Set toolbar and nav bar visibility 
         topNavBar.alpha = 0.8
@@ -153,13 +154,23 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         shareMemeViewController.completionWithItemsHandler = { (activity: String?, success: Bool, items: [AnyObject]?, error: NSError?) in
             if success {
                 self.saveMeme(image)
+                
+                // Add meme to the memes array in the Application Delegate
+                let object = UIApplication.sharedApplication().delegate
+                let appDelegate = object as! AppDelegate
+                appDelegate.memes.append(self.meme)
             }
             self.dismissViewControllerAnimated(true, completion: nil)
         }
     }
     
-    // Reset meme editor to initial conditions
+    // Dismiss meme editor view controller
     @IBAction func cancelButtonPressed(sender: UIBarButtonItem) {
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    // Reset meme editor to initial conditions
+    @IBAction func resetButtonPressed(sender: AnyObject) {
         imageExists = false
         imagePickerView.image = nil
         hideTextFields()
@@ -168,9 +179,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         infoLabel.hidden = false
         infoLabel.attributedText = NSAttributedString(string: "select an image", attributes: labelTextAttributes)
         shareButton.enabled = false
-        cancelButton.enabled = false
+        resetButton.enabled = false
     }
-    
+
     // MARK: - Generate memedImage
     func generateMemedImage() -> UIImage {
         // Hide toolbar and navbar
@@ -285,7 +296,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func subscribeToImageSelectedNotifications() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "enableShareButton", name: imageSelected, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "enableCancelButton", name: imageSelected, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "enableResetButton", name: imageSelected, object: nil)
     }
     
     func unsubscribeToImageSelectedNotifications() {
@@ -344,8 +355,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     // Enable cancel button after user selects an image
-    func enableCancelButton() {
-        cancelButton.enabled = true
+    func enableResetButton() {
+        resetButton.enabled = true
     }
     
     // MARK: - Utilities
