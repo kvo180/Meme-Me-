@@ -15,6 +15,15 @@ class MemeTableViewController: UITableViewController {
         return (UIApplication.sharedApplication().delegate as! AppDelegate).memes
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        if memes.count == 0 {
+            let memeEditor = storyboard?.instantiateViewControllerWithIdentifier("MemeEditorViewController") as! MemeEditorViewController
+            presentViewController(memeEditor, animated: true, completion: nil)
+        }
+    }
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -49,6 +58,5 @@ class MemeTableViewController: UITableViewController {
         let memeEditor = storyboard?.instantiateViewControllerWithIdentifier("MemeEditorViewController") as! MemeEditorViewController
         presentViewController(memeEditor, animated: true, completion: nil)
     }
-    
     
 }

@@ -32,6 +32,10 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     var aspectRatioRect: CGRect = CGRectMake(0.0, 0.0, 0.0, 0.0) // Initialize an empty global CGRect that will contain the size of the user's scaled image
     var verticalSpacing: CGFloat!
     var meme = Meme()
+    // Get memes array from Application Delegate
+    var memes: [Meme] {
+        return (UIApplication.sharedApplication().delegate as! AppDelegate).memes
+    }
     
     // Define text attributes
     let memeTextAttributes = [
@@ -78,6 +82,11 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         // Set buttons to be disabled initially
         shareButton.enabled = false
         resetButton.enabled = false
+        
+        // Disable cancel button if no memes exist 
+        if memes.count == 0 {
+            cancelButton.enabled = false
+        }
         
         // Set toolbar and nav bar visibility 
         topNavBar.alpha = 0.8
