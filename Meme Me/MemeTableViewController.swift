@@ -18,16 +18,20 @@ class MemeTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if memes.count == 0 {
-            let memeEditor = storyboard?.instantiateViewControllerWithIdentifier("MemeEditorViewController") as! MemeEditorViewController
-            presentViewController(memeEditor, animated: true, completion: nil)
-        }
+        navigationItem.leftBarButtonItem = editButtonItem()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        // Enable edit button if a meme exists
+        navigationItem.leftBarButtonItem?.enabled = memes.count > 0
+        
         tableView.reloadData()
+    }
+    
+    override func setEditing(editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

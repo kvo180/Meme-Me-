@@ -29,9 +29,11 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     let imageSelected:String = "com.khoavo.imageSelectedNotificationKey" // Initialize key to notify that an image has been selected
     let textEntered:String = "com.khoavo.textEnteredNotificationKey" // Initialize key to notify that the text field has been edited
     var imageExists: Bool = false
+    var editingMeme: Bool = false
     var aspectRatioRect: CGRect = CGRectMake(0.0, 0.0, 0.0, 0.0) // Initialize an empty global CGRect that will contain the size of the user's scaled image
     var verticalSpacing: CGFloat!
     var meme = Meme()
+    var memeEdit: Meme? // meme object to edit
     // Get memes array from Application Delegate
     var memes: [Meme] {
         return (UIApplication.sharedApplication().delegate as! AppDelegate).memes
@@ -83,11 +85,6 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         shareButton.enabled = false
         resetButton.enabled = false
         
-        // Disable cancel button if no memes exist 
-        if memes.count == 0 {
-            cancelButton.enabled = false
-        }
-        
         // Set toolbar and nav bar visibility 
         topNavBar.alpha = 0.8
         bottomToolbar.alpha = 0.8
@@ -112,11 +109,32 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         
         // Set tap gesture delegates
         hideShow.delegate = self
+        
+        // If memeEdit exists, set up Editor view
+        if let memeEdit = memeEdit {
+            topTextField.text = memeEdit.topText
+            bottomTextField.text = memeEdit.bottomText
+            imagePickerView.image = memeEdit.image
+            imagePickerView.bounds = UIScreen.mainScreen().bounds
+            print(imagePickerView.bounds)
+            
+            // Enable buttons
+            shareButton.enabled = true
+            resetButton.enabled = true
+            
+            // Show textfields and hide info label
+            showTextFields()
+            infoLabel.hidden = true
+            
+            // Manage text field positioning
+            imageExists = true
+            positionTextFields()
+        }
     }
     
     // Handle text field positioning when screen orientation changes
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-         /* To make repositioning text fields animation less abrupt, hide text fields before repositioning them, 
+        /* To make repositioning text fields animation less abrupt, hide text fields before repositioning them,
         then show them after they've been repositioned. */
         
         hideTextFields()
@@ -125,6 +143,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
             // Only run when an image is selected, otherwise image is nil and will cause an exception
             if self.imageExists {
                 self.positionTextFields()
+                print(self.imagePickerView.bounds)
                 self.showTextFields()
             }
         })
@@ -232,6 +251,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         // Conditionally unwrap dictionary key and cast to UIImage
         if let userImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
             imagePickerView.image = userImage
+            print(imagePickerView.bounds)
             // Post image notifications
             postImageSelectedNotification()
             imageExists = true

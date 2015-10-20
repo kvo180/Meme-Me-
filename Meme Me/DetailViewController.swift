@@ -21,6 +21,10 @@ class DetailViewController: UIViewController, UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Set up Edit button
+        let editButton: UIBarButtonItem = UIBarButtonItem(title: "Edit", style: .Plain, target: self, action: "editButtonPressed")
+        navigationItem.rightBarButtonItem = editButton
+        
         // Add tap gestures to hide/show navbars
         let hideShow: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "hideShowToolbars")
         view.addGestureRecognizer(hideShow)
@@ -31,6 +35,12 @@ class DetailViewController: UIViewController, UIGestureRecognizerDelegate {
         super.viewWillAppear(animated)
         
         imageView.image = meme.memedImage
+    }
+    
+    func editButtonPressed() {
+        let editorController = storyboard?.instantiateViewControllerWithIdentifier("MemeEditorViewController") as! MemeEditorViewController
+        editorController.memeEdit = meme
+        presentViewController(editorController, animated: true, completion: nil)
     }
     
     // Hide/show navbars
@@ -45,6 +55,7 @@ class DetailViewController: UIViewController, UIGestureRecognizerDelegate {
             })
         }
         else {
+            // Show toolbars
             UIView.animateWithDuration(0.3, animations: {
                 navBar?.alpha = 0.8
                 tabBar?.alpha = 0.8
