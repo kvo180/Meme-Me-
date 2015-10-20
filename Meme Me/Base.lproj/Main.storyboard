@@ -54,14 +54,14 @@
                                             <rect key="frame" x="145" y="55" width="42" height="21"/>
                                             <animations/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="nLa-xx-7Il">
                                             <rect key="frame" x="145" y="25" width="42" height="20"/>
                                             <animations/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -422,8 +422,8 @@
                         <outlet property="bottomToolbar" destination="oUJ-Pm-xca" id="Wrg-ay-zfJ"/>
                         <outlet property="cameraButton" destination="3OU-FZ-GOi" id="PZ1-cr-9qT"/>
                         <outlet property="cancelButton" destination="dJn-CE-fVn" id="0IW-wL-8DN"/>
-                        <outlet property="imagePickerView" destination="gp3-7S-wki" id="BKV-Q9-e6h"/>
                         <outlet property="infoLabel" destination="OUf-IC-DqK" id="D4N-uB-GcV"/>
+                        <outlet property="memeImageView" destination="gp3-7S-wki" id="A1a-Tl-gFV"/>
                         <outlet property="resetButton" destination="Cgy-w0-Uov" id="3ht-1O-nuc"/>
                         <outlet property="shareButton" destination="aos-ln-6bQ" id="lCH-6O-aCJ"/>
                         <outlet property="topNavBar" destination="I4m-Bj-13K" id="ZOO-QX-3U4"/>

@@ -12,7 +12,7 @@ import AVFoundation
 class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate {
     
     // MARK: - Properties and Outlets
-    @IBOutlet weak var imagePickerView: UIImageView!
+    @IBOutlet weak var memeImageView: UIImageView!
     @IBOutlet weak var topTextField: UITextField!
     @IBOutlet weak var bottomTextField: UITextField!
     @IBOutlet weak var topNavBar: UIToolbar!
@@ -79,7 +79,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         super.viewDidLoad()
         
         // Set imageView to maintain image's aspect ratio
-        imagePickerView.contentMode = UIViewContentMode.ScaleAspectFit
+        memeImageView.contentMode = UIViewContentMode.ScaleAspectFit
         
         // Set buttons to be disabled initially
         shareButton.enabled = false
@@ -114,9 +114,9 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         if let memeEdit = memeEdit {
             topTextField.text = memeEdit.topText
             bottomTextField.text = memeEdit.bottomText
-            imagePickerView.image = memeEdit.image
-            imagePickerView.bounds = UIScreen.mainScreen().bounds
-            print(imagePickerView.bounds)
+            memeImageView.image = memeEdit.image
+            memeImageView.bounds = UIScreen.mainScreen().bounds
+            print(memeImageView.bounds)
             
             // Enable buttons
             shareButton.enabled = true
@@ -143,7 +143,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
             // Only run when an image is selected, otherwise image is nil and will cause an exception
             if self.imageExists {
                 self.positionTextFields()
-                print(self.imagePickerView.bounds)
+                print(self.memeImageView.bounds)
                 self.showTextFields()
             }
         })
@@ -200,7 +200,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     // Reset meme editor to initial conditions
     @IBAction func resetButtonPressed(sender: AnyObject) {
         imageExists = false
-        imagePickerView.image = nil
+        memeImageView.image = nil
         hideTextFields()
         topTextField.text = topPlaceholderText
         bottomTextField.text = bottomPlaceholderText
@@ -250,8 +250,8 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         // Conditionally unwrap dictionary key and cast to UIImage
         if let userImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            imagePickerView.image = userImage
-            print(imagePickerView.bounds)
+            memeImageView.image = userImage
+            print(memeImageView.bounds)
             // Post image notifications
             postImageSelectedNotification()
             imageExists = true
@@ -393,17 +393,17 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     func saveMeme(memedImage: UIImage) {
         meme.topText = topTextField.text!
         meme.bottomText = bottomTextField.text!
-        meme.image = imagePickerView.image!
+        meme.image = memeImageView.image!
         meme.memedImage = memedImage
     }
     
     // Position text fields vertically within user's selected image
     func positionTextFields() {
         // Get CGRect of scaled image
-        aspectRatioRect = AVMakeRectWithAspectRatioInsideRect(imagePickerView.image!.size, imagePickerView.bounds)
+        aspectRatioRect = AVMakeRectWithAspectRatioInsideRect(memeImageView.image!.size, memeImageView.bounds)
         
         // Calculate text field vertical spacing
-        verticalSpacing = (imagePickerView.bounds.height - aspectRatioRect.size.height) / 2
+        verticalSpacing = (memeImageView.bounds.height - aspectRatioRect.size.height) / 2
         
         // Position text fields inside scaled image
         topTextFieldVerticalConstraint.constant = verticalSpacing
