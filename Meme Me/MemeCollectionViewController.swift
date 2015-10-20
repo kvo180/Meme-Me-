@@ -22,7 +22,11 @@ class MemeCollectionViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        // Add edit button to navbar
+        navigationItem.leftBarButtonItem = editButtonItem()
+        
+        // Set flow layout values
         let spacing: CGFloat = 4.0
         width = (view.frame.size.width - (2 * spacing)) / 3.0
         height = (view.frame.size.height - (4 * spacing)) / 5.0
@@ -65,6 +69,15 @@ class MemeCollectionViewController: UICollectionViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        // Enable edit button if a meme exists
+        navigationItem.leftBarButtonItem?.enabled = memes.count > 0
+        
+        collectionView?.reloadData()
+    }
+    
+    override func setEditing(editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        
         collectionView?.reloadData()
     }
     
@@ -79,7 +92,27 @@ class MemeCollectionViewController: UICollectionViewController {
         
         cell.memeImageView.image = meme.memedImage
         
+        // Set delete button visibility and target action
+        cell.deleteButton.hidden = !editing
+        cell.deleteButton.addTarget(self, action: "deleteButtonPressed:", forControlEvents: .TouchUpInside)
+        
         return cell
+    }
+    
+    
+    // Delete meme object from both Meme array and Collection View
+    func deleteButtonPressed(sender: UIButton) {
+        let cell = sender.superview!.superview! as! MemeCollectionViewCell
+        let indexPath = collectionView!.indexPathForCell(cell)!
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        appDelegate.memes.removeAtIndex(indexPath.row)
+        collectionView?.deleteItemsAtIndexPaths([indexPath])
+        
+        // Disable Edit button and end editing if memes array is empty
+        if memes.count == 0 {
+            navigationItem.leftBarButtonItem?.enabled = false
+            editing = false
+        }
     }
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {

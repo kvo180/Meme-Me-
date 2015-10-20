@@ -153,18 +153,30 @@
                                             <animations/>
                                             <color key="backgroundColor" red="0.27272727270000002" green="0.27272727270000002" blue="0.27272727270000002" alpha="1" colorSpace="calibratedRGB"/>
                                         </imageView>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GPx-VR-XaJ">
+                                            <rect key="frame" x="0.0" y="0.0" width="25" height="25"/>
+                                            <animations/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="25" id="H8D-vc-BJq"/>
+                                                <constraint firstAttribute="width" constant="25" id="fHx-s1-Ohb"/>
+                                            </constraints>
+                                            <state key="normal" image="delete"/>
+                                        </button>
                                     </subviews>
                                     <animations/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <animations/>
                                 <constraints>
+                                    <constraint firstItem="GPx-VR-XaJ" firstAttribute="leading" secondItem="LYx-0i-VcU" secondAttribute="leadingMargin" constant="-8" id="41z-5E-R7N"/>
                                     <constraint firstItem="LEx-u5-StK" firstAttribute="top" secondItem="LYx-0i-VcU" secondAttribute="top" id="bz8-d9-AzX"/>
                                     <constraint firstItem="LEx-u5-StK" firstAttribute="leading" secondItem="LYx-0i-VcU" secondAttribute="leading" id="c3T-hQ-DNj"/>
+                                    <constraint firstItem="GPx-VR-XaJ" firstAttribute="top" secondItem="LYx-0i-VcU" secondAttribute="topMargin" constant="-8" id="qL1-ok-lvq"/>
                                     <constraint firstAttribute="bottom" secondItem="LEx-u5-StK" secondAttribute="bottom" id="xTo-s3-Enz"/>
                                     <constraint firstAttribute="trailing" secondItem="LEx-u5-StK" secondAttribute="trailing" id="yAS-UV-pgX"/>
                                 </constraints>
                                 <connections>
+                                    <outlet property="deleteButton" destination="GPx-VR-XaJ" id="5K6-l8-0FD"/>
                                     <outlet property="memeImageView" destination="LEx-u5-StK" id="LcF-OY-PxU"/>
                                 </connections>
                             </collectionViewCell>
@@ -486,6 +498,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="delete" width="256" height="256"/>
         <image name="list-fat-7" width="30" height="30"/>
         <image name="square-individual-nine-7" width="30" height="30"/>
     </resources>
