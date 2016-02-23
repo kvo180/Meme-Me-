@@ -1,0 +1,2 @@
+# Meme-Me-
+A meme generator app that allows users to create and share their own custom memes. The app takes the user’s pictures and overlays text to generate memes that can be shared via social media or email. App allows user to view and edit created memes in a table or collection view. Used fundamental UIKit concepts such as UINavigationController, UITabBarController, UITableView, and UICollectionView.
